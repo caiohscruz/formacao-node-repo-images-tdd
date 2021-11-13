@@ -1,0 +1,19 @@
+{
+  "name": "repo-imagens-tdd",
+  "version": "1.0.0",
+  "main": "src/server.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "caiohscruz",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/jest": "^27.0.2",
+    "express": "^4.17.1",
+    "jest": "^27.3.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.12",
+    "supertest": "^6.1.6"
+  }
+}
