@@ -6,6 +6,8 @@ const mongoose = require("mongoose");
 const UserModel = require("./models/User");
 const User = mongoose.model("User", UserModel);
 
+const bcrypt = require('bcrypt');
+
 const mongoUrl = "mongodb://localhost:27017/guiapics";
 const mongoConfigs = { useNewUrlParser: true, useUnifiedTopology: true };
 mongoose
@@ -38,10 +40,13 @@ app.post("/user", async (req, res) => {
       return;
     }
 
+    var salt = await bcrypt.genSalt(10);
+    var hash = await bcrypt.hash(req.body.password, salt)
+
     var newUser = new User({
       name: req.body.name,
       email: req.body.email,
-      password: req.body.password,
+      password: hash,
     });
 
     await newUser.save();
