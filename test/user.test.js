@@ -84,16 +84,16 @@ describe("Autenticação", () => {
   test("Deve impedir que um usuário não cadastrado se logue", () => {
     return request.post("/auth").send({email: "qualquer@qualquer.com", senha: "senha"}).then(res =>{
       expect(res.statusCode).toEqual(403)
-      expect(res.body.errors.email).toEqual("E-mail não cadastrado")
+      expect(res.body.err).toEqual("E-mail não cadastrado")
     }).catch(err =>{
       throw new Error(err)
     })
   })
 
   test("Deve impedir que um usuário se logue com uma senha errada", () => {
-    return request.post("/auth").send({email: testUser.email, senha: "senha"}).then(res =>{
+    return request.post("/auth").send({email: testUser.email, password: "password"}).then(res =>{
       expect(res.statusCode).toEqual(403)
-      expect(res.body.errors.password).toEqual("Senha incorreta")
+      expect(res.body.err).toEqual("Senha incorreta")
     }).catch(err =>{
       throw new Error(err)
     })
