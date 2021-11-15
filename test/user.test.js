@@ -2,20 +2,25 @@ const app = require("../src/app");
 const supertest = require("supertest");
 const request = supertest(app);
 
+const testUser = {
+  name: "Testando",
+  email: `${Date.now()}@email.com`,
+  password: "teste"
+}
+
+afterAll(()=>{
+  return request.delete(`/user/${testUser.email}`).then(()=>{})
+})
+
 describe("Cadastro de usuário", () => {
   test("Deve cadastrar um usuário com sucesso", () => {
-    var user = {
-      name: "usuario-novo",
-      email: `${Date.now()}@email.com`,
-      password: "senha",
-    };
-
+    
     return request
       .post("/user")
-      .send(user)
+      .send(testUser)
       .then((res) => {
         expect(res.statusCode).toEqual(200);
-        expect(res.body.email).toEqual(user.email);
+        expect(res.body.email).toEqual(testUser.email);
       })
       .catch((err) => {
         fail(err);
@@ -41,20 +46,15 @@ describe("Cadastro de usuário", () => {
   });
 
   test("Deve impedir o cadastro de usuário com e-mail já cadastrado", () => {
-    var user = {
-      name: "usuario-repetido",
-      email: `${Date.now()}@email.com`,
-      password: "senha",
-    };
-
+    
     return request
       .post("/user")
-      .send(user)
+      .send(testUser)
       .then(() => {
         
         return request
           .post("/user")
-          .send(user)
+          .send(testUser)
           .then((res) => {
             expect(res.statusCode).toEqual(400);
             expect(res.body.err).toEqual("E-mail já cadastrado");
