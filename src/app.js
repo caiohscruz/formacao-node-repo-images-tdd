@@ -6,7 +6,11 @@ const mongoose = require("mongoose");
 const UserModel = require("./models/User");
 const User = mongoose.model("User", UserModel);
 
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
+const { request } = require("express");
+
+const jwt = require("jsonwebtoken");
+const jwtSecret = "S3cr#t123@4";
 
 const mongoUrl = "mongodb://localhost:27017/guiapics";
 const mongoConfigs = { useNewUrlParser: true, useUnifiedTopology: true };
@@ -32,7 +36,7 @@ app.post("/user", async (req, res) => {
   }
 
   try {
-    let user = await User.findOne({email: req.body.email });
+    let user = await User.findOne({ email: req.body.email });
 
     if (user != undefined) {
       res.status(400);
@@ -41,7 +45,7 @@ app.post("/user", async (req, res) => {
     }
 
     var salt = await bcrypt.genSalt(10);
-    var hash = await bcrypt.hash(req.body.password, salt)
+    var hash = await bcrypt.hash(req.body.password, salt);
 
     var newUser = new User({
       name: req.body.name,
@@ -58,9 +62,23 @@ app.post("/user", async (req, res) => {
   }
 });
 
-app.delete("/user/:email", async (req,res) => {
-  await User.deleteOne({email: req.params.email})
+app.delete("/user/:email", async (req, res) => {
+  await User.deleteOne({ email: req.params.email });
   res.sendStatus(200);
+});
+
+app.post("/auth", async (req,res) => {
+  let {email, password} = req.body
+
+  jwt.sign({email: email}, jwtSecret, {expiresIn:'48h'}, (err, token) =>{
+    if(err){
+      console.log(err)
+      res.status(500)
+      res.send({msg: err})
+    }else{
+      res.json({token})
+    }
+  })
 })
 
 module.exports = app;
